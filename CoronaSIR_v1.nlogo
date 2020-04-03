@@ -410,7 +410,7 @@ count patches
 
 @#$#@#$#@
 #############################################################################
-## C'EST QUOI CE MODELE ?
+##> C'EST QUOI CE MODELE ?
 ##( description générale de ce que le modèle essaie d'expliquer)
 #############################################################################
 
@@ -419,7 +419,7 @@ Il distingue trois états d'infection: sain (S), infecfté /infectieus (I) et R�
 
 
 #############################################################################
-## COMMENT çA MARCHE ? 
+##> COMMENT çA MARCHE ? 
 ##(principe et règles généralles de fonctionnement)
 #############################################################################
 
@@ -431,11 +431,11 @@ Les gens saines devienent peuvent dévenir malades lorsque elles sont dans la m�
 
 D'autres aspects du modèle sont détaillés ci-dessous. Chaque ligne du code est commentée. 
 #############################################################################
-## COMMENT UTILISER LE MODELE 
+##> COMMENT UTILISER LE MODELE 
 ##(Guide et description des éléments dans l'interface)
 #############################################################################
 
-#> A GAUCHE DE L'INTERFACE: LES CONTREÔLES DU SIMULATEUR
+# A GAUCHE DE L'INTERFACE: LES CONTREÔLES DU SIMULATEUR
 > N_personnes : choisir la taille de la population.
 > N_cases : indique la taille du modèle
 > Densité population : indique le nombre de personnes par case, en moyenne
@@ -447,7 +447,7 @@ D'autres aspects du modèle sont détaillés ci-dessous. Chaque ligne du code es
 > step : avancer la simulation, jour par jour.
 
  
-#> AU MILLIEU DE L'INTERFACE: L'AFFICHAGE DU SIMULATEUR
+# AU MILLIEU DE L'INTERFACE: L'AFFICHAGE DU SIMULATEUR
 > Contôle de vitesse d'affichage ( par défaut : 1 tick = 1 jour)
 > Carré de taille 33 x 33 = 1089 cases. Le monde est ouvert : une personne qui sort d'un côté du carrée entre automatiquement par le côté opposé. 
 > Console : pour écrire des lignes de code qui seront executées par le simulateur instantannément 
@@ -455,7 +455,7 @@ D'autres aspects du modèle sont détaillés ci-dessous. Chaque ligne du code es
 > Information : renseignements sur le modèle et le simulateur.
 
 
-#> A DROITE : AFFICHAGE DES SOERTIES GRAPHIQUES ET NUMERIQUES
+# A DROITE : AFFICHAGE DES SOERTIES GRAPHIQUES ET NUMERIQUES
 > N(contacts/pers/J)= Nombre de contacts par personne et par jour
 > N(contacts/J)= Nombre total de contacts par jour
 > N(expositions/pers/J)= Nombre de contacts entre une personne saine et une personne infectée par personne et par jour
@@ -474,7 +474,7 @@ D'autres aspects du modèle sont détaillés ci-dessous. Chaque ligne du code es
 
 
 #############################################################################
-##  À ESSAYER 
+##>  À ESSAYER 
 ## (ce que l'utilisateur peut faire lors de l'exécution du modèle) 
 #############################################################################
 
@@ -505,7 +505,7 @@ D'autres aspects du modèle sont détaillés ci-dessous. Chaque ligne du code es
 
 
 #############################################################################
-## ÉTENDRE LE MODÈLE 
+##> ÉTENDRE LE MODÈLE 
 ## (ce que un administrateur peut faire pour améliorer modèle) 
 #############################################################################
 
