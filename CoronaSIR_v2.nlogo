@@ -471,41 +471,155 @@ NIL
 HORIZONTAL
 
 @#$#@#$#@
-## WHAT IS IT?
+#############################################################################
+## C'EST QUOI CE MODELE ?
+##( description générale de ce que le modèle essaie d'expliquer)
+#############################################################################
 
-(a general understanding of what the model is trying to show or explain)
+Le modèle Corona_SIR simule la transmission et perpetuation d'un virus (p.ex. le coronavirus) à une échelle journalière dans une population humaine homogène et mixée. 
+Il distingue trois états d'infection: sain (S), infecfté /infectieus (I) et Récupéré / guéri (R). Il considère la mortalité individuelle suite à l'infection dans un context de population de taille fixée.
 
-## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+#############################################################################
+## COMMENT çA MARCHE ? 
+##(principe et règles généralles de fonctionnement)
+#############################################################################
 
-## HOW TO USE IT
+Le modèle est initialisé avec N personnes, dont 1 est infectée. Les gens se déplacent au hasard dans un monde ouvert.
 
-(how to use the model, including a description of each of the items in the Interface tab)
+Les personnes peuvent être dans l'un des trois états d'infection : en bonne santé mais sensible aux infections (vert), malades et infectieux (rouge) et en bonne santé et immunisé (bleu). 
 
-## THINGS TO NOTICE
+Les gens saines devienent peuvent dévenir malades lorsque elles sont dans la même case qu'une persone infectée. A la fin d'une infection, les gens malades peuvent soit se guérir et devenir immunisées pour un certain période de temps, soit mourir. 
 
-(suggested things for the user to notice while running the model)
+Lorsqu'une personne meurt, elle est remplacée par une personne saine et sensible : par conséquence la population reste de taille constante. 
 
-## THINGS TO TRY
+D'autres aspects du modèle sont détaillés ci-dessous. Chaque ligne du code est commentée. 
+#############################################################################
+## COMMENT UTILISER LE MODELE 
+##(Guide et description des éléments dans l'interface)
+#############################################################################
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+A GAUCHE DE L'INTERFACE: LES CONTREÔLES DU SIMULATEUR
 
-## EXTENDING THE MODEL
+ N_personnes : choisir la taille de la population.
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+ N_cases : indique la taille du modèle
 
-## NETLOGO FEATURES
+ Densité population : indique le nombre de personnes par case, en moyenne
 
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
+ %infectiosité : choisir la probabilité d'infection (en %) lorsque deux personnes sont dans la même case
 
-## RELATED MODELS
+ durée_infection : choisir le nombre de jours pendant lesquels une personne malade reste infectieuse
 
-(models in the NetLogo Models Library and elsewhere which are of related interest)
+ durée_immunitée : choisir le nombre de jours pendant lesquels une personne guérie reste immunisée à la maladie
 
-## CREDITS AND REFERENCES
+ setup : initialisation de la simulation
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+ go : lancer la simulation en continu
+
+ step : avancer la simulation, jour par jour.
+
+ 
+ AU MILLIEU DE L'INTERFACE: L'AFFICHAGE DU SIMULATEUR
+
+ Contôle de vitesse d'affichage ( par défaut : 1 tick = 1 jour)
+
+ Carré de taille 33 x 33 = 1089 cases. Le monde est ouvert : une personne qui sort d'un côté du carrée entre automatiquement par le côté opposé. 
+
+ Console : pour écrire des lignes de code qui seront executées par le simulateur instantannément 
+
+ Code : transcription litérale et exhaustive du code de simulation
+
+ Information : renseignements sur le modèle et le simulateur.
+
+
+ A DROITE : AFFICHAGE DES SOERTIES GRAPHIQUES ET NUMERIQUES
+
+ N(contacts/pers/J)= Nombre de contacts par personne et par jour
+
+ N(contacts/J)= Nombre total de contacts par jour
+
+ N(expositions/pers/J)= Nombre de contacts entre une personne saine et une personne infectée par personne et par jour
+
+ N(exposs/J)= Nombre total de contacts entre une personne saine et une personne infectée par jour
+
+ %Expositions par contact: Pourcentage des contacts journalmiers qui ont lieu entre une personne saine et une personne infectée. 
+
+ Graphique 1 : contacts par personne. 
+ N(contacts/pers/J): ligne noire et 
+ N(expositions/pers/J): ligne rouge.  
+
+ %saines : pourcentage de personnes saines
+ %infectess : pourcentage de personnes malades
+ %immunes : pourcentage de personnes gueries et immunisées
+
+ Graphique 2 : Pourcentage de personnes dans chaque état d'infection.
+ %saines : ligne verte, 
+ %infectées : ligne rouge.  
+ %immunes : ligne bleue.  
+
+
+#############################################################################
+##  À ESSAYER 
+## (ce que l'utilisateur peut faire lors de l'exécution du modèle) 
+#############################################################################
+
+Faire varier les paramèrtres d'entrée du simulateur à l'aide des buttons de contrôle 
+(nombre de personnes, infectiosité, durée de l'infection, durée de l'immunité).
+
+Observer comment varient les pourcentages de personnes saines, malades et immunisées en fonction des paramètres d'entrée du simulateur. 
+
+
+#############################################################################
+## À NOTER 
+## (ce que l'utilisateur doit remarquer lors de l'exécution du modèle)
+#############################################################################
+
+Le mouvement des personnes provoque qu'elles rentrent en contact les unes avec les autres, d'où la propagation de la maladie.
+
+Lorsque le nombre de personnes augmente, la densité de population (nobre de personnes par case, en moyenne) augmente à son tour. Plus la densité de population est élévée, plus les contacts entre personnes sont fréquents, et plus facilement la maladie se propage. 
+
+Si l'infectiosité augmente, la maladie se propage plus rapidement et le pourcentage de personnes malade augmente plus vite.
+
+Si la durée d'infection augmente, la maladie se propage plus rapidement et le pourcentage de personnes malade augmente plus vite.
+
+A mesure que nombre de personnes malades augmente (et à mesure que les mlalades guérissen et deviennent immunisés) il y a moins de personnes saines susceptibles d'être infectées. Le pourcentage de personnes malades au cours du temps (ligne rouge sur le graphique 2) dessine une courbe en forme de montagne. On appelle cette courbe la corbe de l'épidémie. Au sommet de cette montagne, lorsque le pourcentage de malades est le plus grande, on dit qu'on est arrivé au pic de l'épidémie.  
+
+Une fois passée le pic de l'épidemie, majorité de la population est immunisée et  le nombre de malades diminue progressivement. L'épidemie finit par s'epuiser d'elle même.
+
+Si la durée d'immunité est trop petite, l'épidémie peut recommencer : on a des épidémies saisonières, comme la gripe.  
+
+
+#############################################################################
+## ÉTENDRE LE MODÈLE 
+## (ce que un administrateur peut faire pour améliorer modèle) 
+#############################################################################
+
+Le coronavirus est une maladie mortelle. Il faudrait introduir une modèle pour la mortalité dans nôtre modèle.
+
+Il faudrait introduir des mécanismes pour modéliser les mesures permettant de réduire le nombre de contacts entre personnes : p. ex. : le confinement.
+
+#############################################################################
+## MODÈLES CONNEXES 
+## (comment ce modèele est liée à d'autres versions)
+#############################################################################
+
+Pour comprendre les notions basiques du modèle de la population homogène mixée, ainsi que les fondamentaux du mouvement des personnes, consulter les versions précédentes: "Modèle Population". 
+
+Pour approfondir sur la modélisation de la propagation du coronavirus, consulter les versions plus élaborées du modèle "Corona_SIR"
+
+
+#############################################################################
+## CRÉDITS ET RÉFÉRENCES
+#############################################################################
+
+Ce modèle aété conçu et réalisé par : 
+Jordi Ferrer. Professeur de Physique Chimie. 
+CGE Léon Gambetta. Paris. Le 03/04/2020.
+
+Version actuelle modifié par Jordi
+Jordi Ferrer. Professeur de Physique Chimie. 
+CGE Léon Gambetta. Paris. Le 03/04/2020.
 @#$#@#$#@
 default
 true

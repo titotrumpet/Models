@@ -11,11 +11,13 @@ turtles-own
 globals
   [ proba_Infect          ;; probabilité de devenir infecté par contact sain-malade
     proba_Mort            ;; probabilité de mourir à la fin de l'ifenction
-    N_contacts ncj ncj-1  ;; nombre de contacts entre personnes (ncj ncj1 : variables pour compter le nombre de contacts par jour)
+    N_contacts ncj ncj-1  ;; nombre de contacts entre personnes (ncj ; ncj-1 : variables pour compter le nombre de contacts par jour)
     N_expos  nej nej-1    ;; nombre de contacts entre personnes sanes <-> malades  (nej : nombre d'expositions par jour)
     %saines               ;; pourcentage de population saine
     %infectes             ;; pourcentage de population infectéé
     %immunes              ;; pourcentage de population guérie
+    N_infect-1            ;; nombre d'infectées à la veille, variable per compter le taux de propagation R
+    R                     ;; taux de reproduction de la maladie
     N_morts               ;; Nombre de morts
     N_populatio           ;; Nombre de population totale
     temps_sans_infect     ;; pour arreter le modele si plus de virus
@@ -140,6 +142,9 @@ to update-global-variables
   set nej N_expos - nej-1
   set nej-1 N_expos
 
+  set R count turtles with [ malade? = 1 ] / max (list N_infect-1 1)
+  set N_infect-1 count turtles with [ malade? = 1 ]
+
   if count turtles > 0
     [ set %infectes (count turtles with [ malade? = 1 ] / count turtles) * 100
       set %immunes (count turtles with [ malade? = 2 ] / count turtles) * 100
@@ -209,7 +214,7 @@ N_personnes
 N_personnes
 0
 5000
-2611.0
+924.0
 1
 1
 NIL
@@ -224,7 +229,7 @@ SLIDER
 %infectiosité
 0
 100
-27.0
+24.0
 1
 1
 NIL
@@ -342,10 +347,10 @@ NIL
 11
 
 MONITOR
-681
-105
-740
-150
+702
+104
+761
+149
 N_morts
 N_morts
 0
@@ -472,7 +477,7 @@ SLIDER
 %confinement
 0
 100
-97.0
+68.0
 1
 1
 NIL
@@ -515,6 +520,17 @@ MONITOR
 150
 Taux_mortalité
 N_morts / count turtles  * 100
+2
+1
+11
+
+MONITOR
+651
+104
+701
+149
+R
+%infectes
 2
 1
 11

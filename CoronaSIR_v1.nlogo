@@ -10,8 +10,8 @@ turtles-own
 ;; variables globales : caractéristiques de la population
 globals
   [ proba_Infect          ;; probabilité de devenir infecté par contact sain-malade
-    N_contacts ncj ncj-1  ;; nombre de contacts entre personnes (ncj ncj1 : variables pour compter le nombre de contacts par jour)
-    N_expos  nej nej-1    ;; nombre de contacts entre personnes sanes <-> malades  (nej : nombre d'expositions par jour)
+    N_contacts ncj ncj-1  ;; nombre total (cummulé) de contacts entre personnes (ncj ncj1 : variables pour compter le nombre de contacts par jour)
+    N_expos  nej nej-1    ;; nombre total (cummulé) de contacts entre personnes sanes <-> malades  (nej : nombre d'expositions par jour)
     %saines               ;; pourcentage de population saine
     %infectes             ;; pourcentage de population infectéé
     %immunes              ;; pourcentage de population guérie
@@ -20,22 +20,22 @@ globals
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; INITIALIZATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Initialization du modèle
 to setup
-  clear-all                  ;; mise à zéro de toutes les variables
-  setup-turtles              ;; lecture des caractéristiques individuelles et initialization de la population
-  setup-global               ;; lecture des caractéristiques et initialization de la population
-  update-global-variables    ;; mise à jour des variables globales
+  clear-all                                  ;; mise à zéro de toutes les variables
+  setup-turtles                              ;; lecture des caractéristiques individuelles et initialization de la population
+  setup-global                               ;; lecture des caractéristiques et initialization de la population
+  update-global-variables                    ;; mise à jour des variables globales
   reset-ticks
 end
 ;; initialization de la population
 to setup-turtles
-  create-turtles N_personnes                           ;; création de N personnes
+  create-turtles N_personnes                 ;; création de N personnes
     [ setxy random-xcor random-ycor          ;; dispersion des personnes au hasard
       set shape "person"
       set size 1                             ;; taille grande, pour faciliter la visualisation
       set malade? 0                          ;; toutes les personnes sont sanes
       set color green                        ;; toutes les personnes sont sanes (couler)
       set temps_malade 0                     ;; toutes les personnes sont sanes (0 jours infectés)
-      set temps_immune 0               ;; toutes les personnes sont susceptibles d'être contagiées (0 jours dimmunite)
+      set temps_immune 0                     ;; toutes les personnes sont susceptibles d'être contagiées (0 jours dimmunite)
       ]
   ask n-of 1 turtles                         ;; choisir une personne au hasard
     [contagion ]                             ;; 1 personnes initiallement infectée
@@ -49,18 +49,20 @@ end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; DEROULEMENT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-to go
-  step
+;; simulation continue
+to go                                                      ;; lancer la simulation en continu
+  step                                                     ;;  chaque étape ou pas de simulation : une journée
 end
 
+;; étape de simulatipon ou pas de temps
 to step
-  ask turtles [
-    move
-    if malade? = 1 [infecter
-                    set temps_malade temps_malade + 1
-                    guérir_ou_perir
+  ask turtles [                                            ;; pour chaque personne ...
+    move                                                   ;; ... on appelle la subroutine "move" pour simuler le mouvement
+    if malade? = 1 [infecter                               ;; ... puis, si la persone est malade, o appelle la subroutine "infecter" pour modéliser les contagions en cas de contact ......
+                    set temps_malade temps_malade + 1      ;; ...... et on fait avancer le compteur de temps d'infection
+                    guérir_ou_perir                        ;; ...... enfin, on appelle la subroutine "guérir_ou_périr" pour évaluer l'évolution de la maladie
                    ]
-    if malade? = 2 [perte_immunite?]
+    if malade? = 2 [perte_immunite?]                       ;; ... si la personne
   ]
   tick
   update-global-variables
@@ -71,58 +73,59 @@ end
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; SUBROUTINES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; mouvement: se déplacer à une case voisine au hasard
-to move                                  ;;  routine per cada personne
-  rt random 100                          ;; tourner à droite un angle au hasard
-  lt random 100                          ;; tourner à gauche un angle au hasard
-  fd 1                                   ;;  avancer d'une case
-  ask other turtles-here                 ;; pour toutes les personnes dans la même case à ce jour...
-  [set N_contacts N_contacts + 1]        ;; ... compter le nombre de contactes par jour
+to move                                        ;;  routine per chaque personne
+  rt random 100                                ;; tourner à droite un angle au hasard
+  lt random 100                                ;; tourner à gauche un angle au hasard
+  fd 1                                         ;; avancer d'une case
+  ask other turtles-here                       ;; pour toutes les personnes dans la même case à ce jour...
+  [set N_contacts N_contacts + 1]              ;; ... compter le nombre de contactes cummulés
 end
 
 
 ;; infection : par contact avec les personnes dans la même case, avec une probabilité "proba_Infect"
-to infecter                                     ;;  routine per cada personne
+to infecter                                     ;;  routine per chaque personne
   ask other turtles-here with [ malade? = 0 ]   ;; pour toutes les personnes saines dans la même case à ce jour...
-    [ set N_expos N_expos + 1                   ;; ... compter le nombre d'expositions par jour. Puis,...
+    [ set N_expos N_expos + 1                   ;; ... compter le nombre d'expositions cummulées. Puis,...
       if random-float 100 < proba_Infect        ;; ... si la chance est inférieur à la probabilité de s'infecter ...
       [ contagion ] ]                           ;; ... la pesronne devient infectée
 end
-;; dévenir malade
-to contagion              ;;  routine per cada personne
-  set malade? 1           ;;  la pesronne est malade
-  set color red
-end
-;; se guérir
-to guérir_ou_perir                             ;;  routine per cada personne
-  ;;;; a introuduir la mortalité -> plus tard
-  if temps_malade > durée_infection [guerison]          ;;  la pesronne est malade
+
+;; dévenir malade : comment une personne saine devient malade
+to contagion                                    ;;  routine per chaque personne (saine qui devient infectée)
+  set malade? 1                                 ;;  la pesronne est malade
+  set color red                                 ;;  changer la couleur d'affichage de la personne
 end
 
-;; guerison
-to guerison               ;; routine per cada personne
-  set malade? 2           ;; la personne est immunisée
-  set temps_malade 0      ;; mise à zéro de la durée de maladie
-  set color blue
-end
-;; perte d'immunitée
-to perte_immunite?           ;; routine per cada personne
-  ifelse temps_immune > durée_immunité
-  [ set malade? 0           ;; la personne est susceptible
-  set color green]
-  [set temps_immune temps_immune + 1]
+;; se guérir : choisi si une personne malade devient immunisée ou péri à la fin de l'infection
+to guérir_ou_perir                              ;;  routine per chaque personne (malade à la fin de l'infection)
+  ;;;; mortalité -> a introuduir plus tard
+  if temps_malade > durée_infection [guerison]  ;;  la pesronne malade est guérie ert devient immunisée
 end
 
+;; guerison : comment une personne malade devient immunisée à la fin de l'infection
+to guerison                                     ;; routine per chaque personne
+  set malade? 2                                 ;; la personne est immunisée
+  set temps_malade 0                            ;; mise à zéro de la durée de maladie
+  set color blue                                ;; changer la couleur d'affichage de la personne
+end
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; perte d'immunitée : comment une personne immunisée devient susceptible à l'infection
+to perte_immunite?                              ;; routine per chaque personne (immunisée à la fin du période d'immunité)
+  set temps_immune temps_immune + 1             ;; faire avancer le temps d'immunité
+  if temps_immune > durée_immunité              ;; si le temps d'immunitée est supérieur à la durée d'immunité ...
+  [ set malade? 0                               ;; ... la personne devient susceptible à l'infection
+  set color green]                              ;; ...  changer la couleur d'affichage de la personne
+end
 
-
+;;
+;; actualisation des variables décrivant la population
 to update-global-variables
-  set ncj N_contacts - ncj-1
-  set ncj-1 N_contacts
-  set nej N_expos - nej-1
-  set nej-1 N_expos
+  set ncj N_contacts - ncj-1                   ;; compter le nombre de contacts du jour (substraction des contacts cummulés à ce jour moins ceux au jour précedent)
+  set ncj-1 N_contacts                         ;; compter le nombre de contacts cummulés au jour précedent
+  set nej N_expos - nej-1                      ;; compter le nombre d'expositions du jour (substraction des expositions cummulées à ce jour moins celles au jour précedent)
+  set nej-1 N_expos                            ;; compter le nombre d'esxpositions cummulées au jour précedent
 
-  if count turtles > 0
+  if count turtles > 0                         ;; compter les pourcentages de personnes saines, malades et immunisées
     [ set %infectes (count turtles with [ malade? = 1 ] / count turtles) * 100
       set %immunes (count turtles with [ malade? = 2 ] / count turtles) * 100
       set %saines  100 - %immunes - %infectes
@@ -276,13 +279,13 @@ true
 "" ""
 PENS
 "saines" 1.0 0 -10899396 true "" "plot %saines"
-"infectes" 1.0 0 -2674135 true "" "plot %infectes"
-"immunes" 1.0 0 -13345367 true "" "plot %immunes"
+"malades" 1.0 0 -2674135 true "" "plot %infectes"
+"immunisées" 1.0 0 -13345367 true "" "plot %immunes"
 
 MONITOR
 650
 152
-710
+704
 197
 NIL
 %saines
@@ -291,22 +294,22 @@ NIL
 11
 
 MONITOR
-712
+707
 152
-782
+769
 197
-NIL
+%malades
 %infectes
 1
 1
 11
 
 MONITOR
-784
+770
 152
 847
 197
-NIL
+%immunisées
 %immunes
 1
 1
@@ -410,8 +413,8 @@ count patches
 
 @#$#@#$#@
 #############################################################################
-## C'EST QUOI CE MODELE ?
-##( description générale de ce que le modèle essaie d'expliquer)
+## 			C'EST QUOI CE MODELE ?
+##	 description générale de ce que le modèle essaie d'expliquer
 #############################################################################
 
 Le modèle Corona_SIR simule la transmission et perpetuation d'un virus (p.ex. le coronavirus) à une échelle journalière dans une population humaine homogène et mixée. 
@@ -419,20 +422,20 @@ Il distingue trois états d'infection: sain (S), infecfté /infectieus (I) et R�
 
 
 #############################################################################
-## COMMENT çA MARCHE ? 
-##(principe et règles généralles de fonctionnement)
+## 			COMMENT çA MARCHE ? 
+##	principe et règles généralles de fonctionnement	
 #############################################################################
 
 Le modèle est initialisé avec N personnes, dont 1 est infectée. Les gens se déplacent au hasard dans un monde ouvert.
 
 Les personnes peuvent être dans l'un des trois états d'infection : en bonne santé mais sensible aux infections (vert), malades et infectieux (rouge) et en bonne santé et immunisé (bleu). 
 
-Les gens saines devienent peuvent dévenir malades lorsque elles sont dans la même case qu'une persone infectée. Les gens malades se guérissent et deviennent immunes à la fin d'une infection. 
+Les gens saines devienent peuvent dévenir malades lorsque elles sont dans la même case qu'une persone infectée. Les gens malades se guérissent et deviennent immunisées à la fin d'une infection. 
 
 D'autres aspects du modèle sont détaillés ci-dessous. Chaque ligne du code est commentée. 
 #############################################################################
-## COMMENT UTILISER LE MODELE 
-##(Guide et description des éléments dans l'interface)
+##			 COMMENT UTILISER LE MODELE 
+## 	Guide et description des éléments dans l'interface
 #############################################################################
 
 A GAUCHE DE L'INTERFACE: LES CONTREÔLES DU SIMULATEUR
@@ -487,17 +490,17 @@ A GAUCHE DE L'INTERFACE: LES CONTREÔLES DU SIMULATEUR
 
  %saines : pourcentage de personnes saines
  %infectess : pourcentage de personnes malades
- %immunes : pourcentage de personnes gueries et immunisées
+ %immunisées : pourcentage de personnes gueries et immunisées
 
  Graphique 2 : Pourcentage de personnes dans chaque état d'infection.
  %saines : ligne verte, 
  %infectées : ligne rouge.  
- %immunes : ligne bleue.  
+ %immunisées : ligne bleue.  
 
 
 #############################################################################
-##  À ESSAYER 
-## (ce que l'utilisateur peut faire lors de l'exécution du modèle) 
+##			  À ESSAYER 
+## ce que l'utilisateur peut faire lors de l'exécution du modèle 
 #############################################################################
 
 Faire varier les paramèrtres d'entrée du simulateur à l'aide des buttons de contrôle 
@@ -507,8 +510,8 @@ Observer comment varient les pourcentages de personnes saines, malades et immuni
 
 
 #############################################################################
-## À NOTER 
-## (ce que l'utilisateur doit remarquer lors de l'exécution du modèle)
+## 			À NOTER 
+## ce que l'utilisateur doit remarquer lors de l'exécution du modèle
 #############################################################################
 
 Le mouvement des personnes provoque qu'elles rentrent en contact les unes avec les autres, d'où la propagation de la maladie.
@@ -527,8 +530,8 @@ Si la durée d'immunité est trop petite, l'épidémie peut recommencer : on a d
 
 
 #############################################################################
-## ÉTENDRE LE MODÈLE 
-## (ce que un administrateur peut faire pour améliorer modèle) 
+## 			ÉTENDRE LE MODÈLE 
+## ce que un administrateur peut faire pour améliorer modèle
 #############################################################################
 
 Le coronavirus est une maladie mortelle. Il faudrait introduir une modèle pour la mortalité dans nôtre modèle.
@@ -536,8 +539,8 @@ Le coronavirus est une maladie mortelle. Il faudrait introduir une modèle pour 
 Il faudrait introduir des mécanismes pour modéliser les mesures permettant de réduire le nombre de contacts entre personnes : p. ex. : le confinement.
 
 #############################################################################
-## MODÈLES CONNEXES 
-## (comment ce modèele est liée à d'autres versions)
+##			 MODÈLES CONNEXES 
+## 	comment ce modèele est liée à d'autres versions
 #############################################################################
 
 Pour comprendre les notions basiques du modèle de la population homogène mixée, ainsi que les fondamentaux du mouvement des personnes, consulter les versions précédentes: "Modèle Population". 
@@ -546,16 +549,16 @@ Pour approfondir sur la modélisation de la propagation du coronavirus, consulte
 
 
 #############################################################################
-## CRÉDITS ET RÉFÉRENCES
+## 			CRÉDITS ET RÉFÉRENCES
 #############################################################################
 
 Ce modèle aété conçu et réalisé par : 
 Jordi Ferrer. Professeur de Physique Chimie. 
-CGE Léon Gambetta. Paris. Le 03/04/2020.
+CGE Léon Gambetta. Paris. Le 01/04/2020.
 
 Version actuelle modifié par Jordi
 Jordi Ferrer. Professeur de Physique Chimie. 
-CGE Léon Gambetta. Paris. Le 03/04/2020.
+CGE Léon Gambetta. Paris. Le 01/04/2020.
 @#$#@#$#@
 default
 true
