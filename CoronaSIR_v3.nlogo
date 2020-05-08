@@ -51,7 +51,6 @@ end
 ;; initialisation des variables globales
 to setup-global
   ask patches [set pcolor white]              ;; fond d'écran blanc pour faciliter la visualisation
-  set proba_Infect  %infectiosité / 100       ;; lecture de la probabilité de tomber malade a chaque contact avec une autre personne
 end
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; DEROULEMENT ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -63,10 +62,8 @@ end
 
 to step
   ask turtles [
-   ifelse confinement
-    [if random-float 100 > %confinement
-      [move]]
-    [move]
+    move
+    move
     if malade? = 1 [infecter
                     set temps_malade temps_malade + 1
                     guérir_ou_perir
@@ -95,6 +92,8 @@ end
 to infecter                                     ;;  routine per cada personne
   ask other turtles-here with [ malade? = 0 ]   ;; pour toutes les personnes saines dans la même case à ce jour...
     [ set N_expos N_expos + 1                   ;; ... compter le nombre d'expositions par jour. Puis,...
+      ifelse confinement [set proba_Infect  (%infectiosité) * (100 - %confinement) / 10000 ]
+      [set proba_Infect  %infectiosité / 100 ]
       if random-float 1 < proba_Infect          ;; ... si la chance est inférieur à la probabilité de s'infecter ...
       [ contagion ] ]                           ;; ... la pesronne devient infectée
 end
@@ -214,7 +213,7 @@ N_personnes
 N_personnes
 0
 5000
-924.0
+2898.0
 1
 1
 NIL
@@ -229,7 +228,7 @@ SLIDER
 %infectiosité
 0
 100
-24.0
+13.0
 1
 1
 NIL
@@ -307,11 +306,11 @@ true
 true
 "" ""
 PENS
-"saines" 1.0 0 -10899396 true "" "plot %saines"
-"infectes" 1.0 0 -2674135 true "" "plot %infectes"
-"immunes" 1.0 0 -13345367 true "" "plot %immunes"
+"confinement?" 1.0 0 -4539718 true "" "if confinement [plot-pen-up plotxy ticks 0 plot-pen-down plotxy ticks plot-y-max]"
+"saines" 1.0 0 -14439633 true "" "plot %saines"
+"infectés" 1.0 0 -2674135 true "" "plot %infectes"
+"immunisés" 1.0 0 -14070903 true "" "plot %immunes"
 "morts" 1.0 0 -16777216 true "" "plot N_morts / N_populatio * 100"
-"confines" 1.0 0 -3026479 true "" "if confinement [if ticks mod 10 = 0 [plot-pen-up plotxy ticks 0 plot-pen-down plotxy ticks plot-y-max ]]"
 
 MONITOR
 650
@@ -477,7 +476,7 @@ SLIDER
 %confinement
 0
 100
-68.0
+94.0
 1
 1
 NIL
