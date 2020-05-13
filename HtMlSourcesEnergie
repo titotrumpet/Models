@@ -1,38 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta name="web.swf" content="Webpage to publish a flash applet" />
-  <meta charset="utf-8">
-  <title>Change_me</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-</head>
-
-<body>
-  
-<div class="container">
-  
-</div>
-
-<script>
-            <XMP>
-            <table width="100%" class="ex" cellspacing="0" border="1"> 
-               <tr> 
-                  <td>
-                    <object width="550" height="400">
-                       <param name="movie" value="somefilename.swf">
-                       <embed src="03-sources-energie.swf" width="550" height="400">
-                       </embed>
-                    </object>
-                  </td> 
-               </tr>
-            </table> 
-            </XMP>
-</script>
-
-</body>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>example SWF</title>
+        <style type="text/css" media="screen">
+        html, body { height:100%; background-color: #ffff99;}
+        body { margin:0; padding:0; overflow:hidden; }
+        #flashContent { width:100%; height:100%; }
+        </style>
+    </head>
+    <body>
+        <div id="flashContent">
+            <object type="application/x-shockwave-flash" data="03-sources-energie.swf" width="822" height="550" id="example" style="float: none; vertical-align:middle">
+                <param name="movie" value="03-sources-energie.swf" />
+                <param name="quality" value="high" />
+                <param name="bgcolor" value="#ffff99" />
+                <param name="play" value="true" />
+                <param name="loop" value="true" />
+                <param name="wmode" value="window" />
+                <param name="scale" value="showall" />
+                <param name="menu" value="true" />
+                <param name="devicefont" value="false" />
+                <param name="salign" value="" />
+                <param name="allowScriptAccess" value="sameDomain" />
+                <a href="http://www.adobe.com/go/getflash">
+                    <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+                </a>
+            </object>
+        </div>
+    </body>
 </html>
-
