@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="web.swf" content="Webpage to publish a flash applet" />
+  <meta charset="utf-8">
+  <title>Change_me</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+</head>
+
+<body>
+  
+<div class="container">
+  
+</div>
+
+<script>
+            <XMP>
+            <table width="100%" class="ex" cellspacing="0" border="1"> 
+               <tr> 
+                  <td>
+                    <object width="550" height="400">
+                       <param name="movie" value="somefilename.swf">
+                       <embed src="03-sources-energie.swf" width="550" height="400">
+                       </embed>
+                    </object>
+                  </td> 
+               </tr>
+            </table> 
+            </XMP>
+</script>
+
+</body>
+</html>
+
